@@ -7,8 +7,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,9 +19,7 @@ import android.widget.Toast;
 import com.example.experiment2.word.WordContent;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import afu.org.checkerframework.checker.igj.qual.I;
 
 public class MainActivity extends AppCompatActivity implements ItemFragment.OnItemClickListener{
 
@@ -34,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnIt
     private WordDao wordDao;
     private static volatile WordBean wordBean;
     ArrayList<WordBean> wordList = new ArrayList<>();
-    private FragmentManager fragmentManager = getSupportFragmentManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnIt
                 insert(MainActivity.this);
                 ItemFragment itemFragment = (ItemFragment) getSupportFragmentManager().findFragmentById(R.id.wordsList);
                 itemFragment.onResume();
-
             }
         });
 
@@ -76,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnIt
                 delete(MainActivity.this);
                 ItemFragment itemFragment = (ItemFragment) getSupportFragmentManager().findFragmentById(R.id.wordsList);
                 itemFragment.onResume();
+                refresh();
             }
         });
 
@@ -184,11 +179,19 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.OnIt
             @Override
             public void run() {
                 wordList = (ArrayList<WordBean>) wordDao.getAll();
+                WordContent.deleteAll();
                 for(id = 0; id < wordList.size(); id++) {
                     WordContent.addItem(wordList.get(id).id+"",wordList.get(id).word,wordList.get(id).meaning,wordList.get(id).sample);
                 }
 
             }
         }).start();
+    }
+
+    private void refresh() {
+        finish();
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+        onCreate(null);
     }
 }

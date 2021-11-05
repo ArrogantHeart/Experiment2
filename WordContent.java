@@ -1,5 +1,7 @@
 package com.example.experiment2.word;
 
+import androidx.room.processor.TableEntityProcessor;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,8 +39,22 @@ public class WordContent {
     }
 
     public static void deleteItem(WordItem item) {
-        ITEMS.remove(item.id);
+        for(int i = 0; i<ITEMS.size(); i++) {
+            if (ITEMS.get(i).id == item.id) {
+                ITEMS.remove(item.id);
+            }
+        }
         ITEM_MAP.remove(item.id,item);
+    }
+
+    public static void deleteAll() {
+        int n = ITEMS.size();
+        for(int i = 0; i< n; i++) {
+            if(ITEMS.get(0) != null) {
+                ITEM_MAP.remove(ITEMS.get(0).id,ITEMS.get(0));
+                ITEMS.remove(0);
+            }
+        }
     }
 
     public static void deleteItem(String id, String word, String meaning, String sample){
